@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}Dashboard{% endblock %} · Entregas de e-commerce</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='estilo.css') }}">
+  {% block cabeza %}{% endblock %}
+</head>
+<body>
+  <header class="encabezado">
+    <div class="encabezado-interior">
+      <div>
+        <p class="sobretitulo">HEFESTO · Data Mart de entregas</p>
+        <h1>Logística y entrega de pedidos de e-commerce</h1>
+        <p class="bajada">50.000 envíos de 2026 en un modelo estrella: siete dimensiones y una tabla de hechos en MySQL.</p>
+      </div>
+      <nav class="navegacion" aria-label="Secciones">
+        <a href="{{ url_for('inicio') }}" {% if pagina == 'dashboard' %}aria-current="page"{% endif %}>Dashboard</a>
+        <a href="{{ url_for('etl') }}" {% if pagina == 'etl' %}aria-current="page"{% endif %}>ETL</a>
+      </nav>
+    </div>
+  </header>
+  {% block contenido %}{% endblock %}
+  <footer>Base de Datos Aplicada · Cátedra B · UCC · TP #2</footer>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

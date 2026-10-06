@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block titulo %}Dashboard{% endblock %}
+{% block cabeza %}
+<script src="https://cdn.jsdelivr.net/npm/plotly.js-cartesian-dist-min@3.7.0/plotly-cartesian.min.js" defer></script>
+{% endblock %}
+{% block contenido %}
+<div class="filtros" id="filtros">
+  <div class="filtros-interior">
+    <div class="grupo-filtro" role="group" aria-label="Trimestre">
+      <span class="etiqueta-filtro">Trimestre</span>
+      <div class="chips" id="filtro-trimestre"></div>
+    </div>
+    <div class="desplegables" id="desplegables"></div>
+    <button type="button" class="boton-limpiar" id="limpiar" hidden>Quitar filtros</button>
+  </div>
+</div>
+
+<main class="contenido" id="contenido">
+  <p class="estado" id="estado" role="status">Cargando datos…</p>
+
+  <section class="kpis" id="kpis" aria-label="Indicadores generales"></section>
+
+  <section class="tarjeta">
+    <div class="tarjeta-cabeza">
+      <div>
+        <h2>Evolución mes a mes</h2>
+        <p class="pregunta">Cómo se mueve cada indicador a lo largo de 2026 con los filtros elegidos.</p>
+      </div>
+      <div class="segmentos" id="vistas-mes" role="group" aria-label="Indicador"></div>
+    </div>
+    <div class="grafico grafico-bajo" id="grafico-mes"></div>
+  </section>
+
+  <nav class="indice" aria-label="Preguntas">
+    {% for n in range(1, 7) %}<a href="#p{{ n }}">Pregunta {{ n }}</a>{% endfor %}
+  </nav>
+
+  {% for n in range(1, 7) %}
+  <section class="tarjeta" id="p{{ n }}">
+    <div class="tarjeta-cabeza">
+      <div>
+        <h2><span class="numero">{{ n }}</span><span id="titulo-{{ n }}"></span></h2>
+        <p class="pregunta">{{ textos[n].pregunta }}</p>
+      </div>
+      <div class="segmentos" id="vistas-{{ n }}" role="group" aria-label="Qué mostrar"></div>
+    </div>
+
+    <div class="pestanas" role="tablist" aria-label="Pregunta {{ n }}">
+      <button type="button" role="tab" aria-selected="true" aria-controls="panel-grafico-{{ n }}" id="tab-grafico-{{ n }}">Gráfico</button>
+      <button type="button" role="tab" aria-selected="false" aria-controls="panel-tabla-{{ n }}" id="tab-tabla-{{ n }}">Tabla</button>
+      <button type="button" role="tab" aria-selected="false" aria-controls="panel-sql-{{ n }}" id="tab-sql-{{ n }}">SQL</button>
+      <button type="button" role="tab" aria-selected="false" aria-controls="panel-lectura-{{ n }}" id="tab-lectura-{{ n }}">Lectura</button>
+    </div>
+
+    <div class="panel" role="tabpanel" id="panel-grafico-{{ n }}" aria-labelledby="tab-grafico-{{ n }}">
+      <div class="grafico" id="grafico-{{ n }}"></div>
+      <p class="como">{{ como_se_lee[n] }}</p>
+    </div>
+    <div class="panel" role="tabpanel" id="panel-tabla-{{ n }}" aria-labelledby="tab-tabla-{{ n }}" hidden>
+      <p class="cuenta"><span id="cuenta-{{ n }}"></span> · Los nombres se muestran en castellano; en la base están como vienen en el archivo (por ejemplo, International o Snow).</p>
+      <div class="tabla" id="tabla-{{ n }}"></div>
+    </div>
+    <div class="panel" role="tabpanel" id="panel-sql-{{ n }}" aria-labelledby="tab-sql-{{ n }}" hidden>
+      <p class="como">La consulta tal como se ejecutó contra el modelo estrella, con los filtros elegidos.</p>
+      <pre id="sql-{{ n }}"></pre>
+    </div>
+    <div class="panel" role="tabpanel" id="panel-lectura-{{ n }}" aria-labelledby="tab-lectura-{{ n }}" hidden>
+      <p>{{ lecturas[n] }}</p>
+      <p class="como">Esta lectura está hecha con todos los datos del año, sin filtros.</p>
+    </div>
+  </section>
+  {% endfor %}
+</main>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='dashboard.js') }}" defer></script>
+{% endblock %}

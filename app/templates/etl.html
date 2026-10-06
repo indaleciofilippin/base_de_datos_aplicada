@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block titulo %}ETL{% endblock %}
+{% block contenido %}
+<main class="contenido">
+  <section class="kpis" aria-label="Filas por tabla">
+    {% for fila in filas.filas %}
+    <div class="kpi">
+      <p class="kpi-nombre">{{ tablas.get(fila[0], fila[0]) }}</p>
+      <p class="kpi-valor">{{ fila[1]|numero }}</p>
+      <p class="kpi-nota"><code>{{ fila[0] }}</code></p>
+    </div>
+    {% endfor %}
+  </section>
+
+  <section class="tarjeta">
+    <div class="tarjeta-cabeza">
+      <div>
+        <h2>Conciliación: archivo, archivo limpio y DW</h2>
+        <p class="pregunta">Los conteos y la conciliación de <code>05_verificacion.sql</code>, consultados en vivo sobre la base. Si las tres filas dan lo mismo, la carga no perdió ni duplicó ningún envío.</p>
+      </div>
+    </div>
+    <div class="tabla" style="margin-top: 14px">
+      <table>
+        <thead><tr>{% for c in conciliacion.columnas %}<th{% if not loop.first %} class="numero-celda"{% endif %}>{{ columnas.get(c, c) }}</th>{% endfor %}</tr></thead>
+        <tbody>
+          {% for fila in conciliacion.filas %}<tr>{% for v in fila %}<td{% if not loop.first %} class="numero-celda"{% endif %}>{{ v if loop.first else v|numero }}</td>{% endfor %}</tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% if coincide %}
+    <p class="aviso">
+      <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="currentColor"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Las tres filas coinciden en los seis totales.
+    </p>
+    {% else %}
+    <p class="aviso aviso-mal">Las filas no coinciden: revisar la carga.</p>
+    {% endif %}
+    <details class="detalle-sql">
+      <summary>Ver SQL de la conciliación</summary>
+      <pre>{{ conciliacion.sql }}</pre>
+    </details>
+    <details class="detalle-sql">
+      <summary>Ver SQL de los conteos</summary>
+      <pre>{{ filas.sql }}</pre>
+    </details>
+  </section>
+</main>
+{% endblock %}
